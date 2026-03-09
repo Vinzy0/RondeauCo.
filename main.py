@@ -77,7 +77,7 @@ print("Loading vector store...")
 embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 vector_store = FAISS.load_local(VECTOR_STORE_PATH, embeddings, allow_dangerous_deserialization=True)
 retriever = vector_store.as_retriever(search_kwargs={"k": 4})  # retrieve top 4 chunks
-print("✅ Vector store loaded!")
+print("Vector store loaded!")
 
 # LLM with streaming enabled
 llm = ChatOpenAI(
@@ -89,7 +89,7 @@ llm = ChatOpenAI(
 )
 
 prompt = PromptTemplate(
-    input_variables=["context", "question"],
+    input_variables=["chat_history", "context", "question"],
     template=SYSTEM_PROMPT,
 )
 

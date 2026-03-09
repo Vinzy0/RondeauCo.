@@ -4,3 +4,4 @@ vector_store/
 __pycache__/
 *.pyc
 .ipynb_checkpoints/
+.claude/settings.local.json
