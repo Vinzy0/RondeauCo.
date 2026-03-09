@@ -160,6 +160,13 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (!response.ok) {
+                if (response.status === 429) {
+                    throw new Error('Too many requests. Please wait a minute and try again.');
+                }
+                if (response.status === 400) {
+                    const data = await response.json();
+                    throw new Error(data.detail || 'Invalid input.');
+                }
                 throw new Error(`Server returned ${response.status}`);
             }
 
@@ -238,6 +245,13 @@ document.addEventListener('DOMContentLoaded', () => {
         event.preventDefault();
         const question = inputField.value.trim();
         if (!question || isStreaming) return;
+
+        // CLIENT-SIDE VALIDATION
+        if (question.length > 500) {
+            addMessage('assistant', 'Please keep your question under 500 characters.');
+            return;
+        }
+
         inputField.value = '';
         sendMessage(question);
     });

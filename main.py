@@ -4,7 +4,7 @@
 # Features: streaming responses, cited sources, topic restriction
 # ============================================================
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
@@ -16,16 +16,32 @@ import json
 import os
 from typing import List, Optional
 from dotenv import load_dotenv
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 
 load_dotenv()
 
+# Rate limiter setup
+limiter = Limiter(key_func=get_remote_address)
 app = FastAPI()
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+# SECURITY: Restrict CORS to your frontend's actual URL
+ALLOWED_ORIGINS = [
+    "http://localhost:5500",  # VS Code Live Server
+    "http://127.0.0.1:5500",
+    "http://localhost:3000",  # Common React/Vite port
+    "http://localhost:8000",
+    # "https://your-production-domain.com",
+]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # in production, replace * with your actual frontend URL
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=ALLOWED_ORIGINS,
+    allow_methods=["GET", "POST"], # Only allow necessary methods
+    allow_headers=["Content-Type"], # Only allow necessary headers
 )
 
 # ---- CHANGE THESE ----
@@ -89,8 +105,19 @@ class Question(BaseModel):
     question: str
     history: List[ChatMessage] = []
 
+    # Simple input validation
+    def validate_input(self):
+        if not self.question.strip():
+            raise HTTPException(status_code=400, detail="Question cannot be empty")
+        if len(self.question) > 500:
+            raise HTTPException(status_code=400, detail="Question too long (max 500 characters)")
+        return self
+
 @app.post("/ask")
-async def ask(body: Question):
+@limiter.limit("5/minute")
+async def ask(request: Request, body: Question):
+    # Validate input
+    body.validate_input()
     # Step 0 — Prepare Chat History string
     history_str = "\n".join([f"{m.role}: {m.content}" for m in body.history])
     
