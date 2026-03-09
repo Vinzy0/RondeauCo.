@@ -13,14 +13,14 @@ import os
 
 # ---- CHANGE THIS ----
 PDF_FILES = [
-    "data/01-dinner-menu.pdf",
-    "data/02-faq.pdf",
-    "data/03-about.pdf",
-    "data/04-wine-and-cocktails.pdf",
-    "data/05-private-dining-and-events.pdf",
-    "data/06-seasonal-specials.pdf",
+    "../data/01-dinner-menu.pdf",
+    "../data/02-faq.pdf",
+    "../data/03-about.pdf",
+    "../data/04-wine-and-cocktails.pdf",
+    "../data/05-private-dining-and-events.pdf",
+    "../data/06-seasonal-specials.pdf",
 ]
-VECTOR_STORE_PATH = "vector_store"
+VECTOR_STORE_PATH = "../vector_store"
 # ----------------------
 
 def ingest():
