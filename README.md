@@ -2,6 +2,8 @@
 
 A complete Retrieval-Augmented Generation (RAG) chatbot and frontend for a premium restaurant experience.
 
+> **Note:** Rondeau & Co. is a fictional restaurant. This is a portfolio project built to demonstrate RAG capabilities and full-stack development.
+
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=FastAPI&logoColor=white)
 ![LangChain](https://img.shields.io/badge/LangChain-121212?style=for-the-badge&logo=chainlink&logoColor=white)
